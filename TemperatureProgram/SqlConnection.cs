@@ -27,7 +27,20 @@ namespace TemperatureProgram
             using var connection = new SqliteConnection(ConnectionString);
             connection.Open();
 
-            new SqliteCommand("CREATE TABLE IF NOT EXISTS " + MainTableName + " (date DATETIME, temperature DOUBLE);", connection).ExecuteNonQuery();
+            new SqliteCommand("CREATE TABLE IF NOT EXISTS " + MainTableName + " (date DATETIME, temperature DOUBLE);", connection)
+                .ExecuteNonQuery();
+        }
+
+        public static void AddElement(DateTime date, double temperature)
+        {
+            string temperatureString = string.Format("{0:0.00}", temperature).Replace(",", ".");
+            string dateString = date.ToString("yyyy-MM-dd HH:m:ss");
+            using (var connection = new SqliteConnection(ConnectionString))
+            {
+                connection.Open();
+                new SqliteCommand("INSERT INTO " + MainTableName + " (date, temperature) VALUES ('" + dateString + "', '" + temperatureString + "');", connection)
+                    .ExecuteNonQuery();
+            }
         }
     }
 }

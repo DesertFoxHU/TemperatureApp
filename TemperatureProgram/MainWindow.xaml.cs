@@ -38,22 +38,6 @@ namespace TemperatureProgram
         private void SetCurrentDate(DateTime time)
         {
             CurrentDate = time;
-            Label text;
-            foreach (DayOfWeek day in Enum.GetValues(CurrentDate.DayOfWeek.GetType()))
-            {
-                try
-                {
-                    text = (Label)this.FindName(day.ToString());
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Nem található szöveg ezzel az azonosítóval: {CurrentDate.DayOfWeek}, hibakód: {ex.StackTrace}");
-                    return;
-                }
-
-                if(day == CurrentDate.DayOfWeek) text.FontWeight = FontWeights.Bold;
-                else text.FontWeight = FontWeights.Normal;
-            }
         }
 
         private void DatePicker_CalendarClosed(object sender, RoutedEventArgs e)
@@ -69,6 +53,17 @@ namespace TemperatureProgram
         private void DatePicker_ContextMenuClosing(object sender, ContextMenuEventArgs e)
         {
             SetCurrentDate(DatePicker.DisplayDate);
+        }
+
+        private void Canvas_Loaded(object sender, RoutedEventArgs e)
+        {
+            CanvasDrawer.DrawBorder(Canvas.ActualWidth);
+        }
+
+        private void Admin_Click(object sender, RoutedEventArgs e)
+        {
+            DataWindow window = new DataWindow();
+            window.Show();
         }
     }
 }
