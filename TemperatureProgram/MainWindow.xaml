@@ -5,17 +5,35 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TemperatureProgram"
         mc:Ignorable="d"
-        Title="TemperatureProgram" Height="322" Width="552">
+        Title="TemperatureProgram" Height="336" Width="552" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowState="Normal">
     <Grid>
-        
+
         <GroupBox Background="#18000000" VerticalAlignment="Top" Height="33">
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <Button x:Name="PreviousWeekBttn" Content="&lt;" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Click="PreviousWeekBttn_Click"/>
-                <Button x:Name="NextWeekBttn" Content="&gt;" Margin="0,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Center" Click="NextWeekBttn_Click"/>
-                <Label x:Name="CurrentDateLabel" Content="2022.04.08" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Segoe UI" Margin="0,0,0,0"/>
+                <DatePicker x:Name="DatePicker" Focusable="False" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Center" FirstDayOfWeek="Monday" CalendarClosed="DatePicker_CalendarClosed" DisplayDate="2022-04-09" ContextMenuClosing="DatePicker_ContextMenuClosing">
+                    <DatePicker.Resources>
+                        <Style TargetType="DatePickerTextBox">
+                            <Setter Property="Text" Value="Válassz dátumot"/>
+                            <EventSetter Event="MouseLeftButtonUp" Handler="DatePickerTextBox_MouseLeftButtonUp"/>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
             </Grid>
         </GroupBox>
-        <GroupBox Margin="0,25,0,0" Background="#FFE3FFFC"/>
+        <GroupBox Margin="0,25,0,0" Background="#FFE3FFFC">
+            <Grid>
+                <Canvas x:Name="WeatherCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,230,10,0">
+                    <Line Stroke="Black" StrokeThickness="1" Stretch="Fill" X2="{Binding ActualWidth, ElementName=WeatherCanvas, Mode=OneWay}"/>
+                </Canvas>
+                <Label x:Name="Monday" Content="Hétfő" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="Bottom" FontWeight="Normal" FontSize="14" HorizontalContentAlignment="Left"/>
+                <Label x:Name="Tuesday" Content="Kedd" HorizontalAlignment="Left" Margin="80,0,0,10" VerticalAlignment="Bottom" FontWeight="Normal" FontSize="14" HorizontalContentAlignment="Left"/>
+                <Label x:Name="Wednesday" Content="Szerda" HorizontalAlignment="Left" Margin="150,0,0,10" VerticalAlignment="Bottom" FontWeight="Normal" FontSize="14" HorizontalContentAlignment="Left"/>
+                <Label x:Name="Thursday" Content="Csütörtök" HorizontalAlignment="Left" Margin="220,0,0,10" VerticalAlignment="Bottom" FontWeight="Normal" FontSize="14" HorizontalContentAlignment="Left"/>
+                <Label x:Name="Friday" Content="Péntek" HorizontalAlignment="Left" Margin="290,0,0,10" VerticalAlignment="Bottom" FontWeight="Normal" FontSize="14" HorizontalContentAlignment="Left"/>
+                <Label x:Name="Saturday" Content="Szombat" HorizontalAlignment="Left" Margin="360,0,0,10" VerticalAlignment="Bottom" FontWeight="Normal" FontSize="14" HorizontalContentAlignment="Left"/>
+                <Label x:Name="Sunday" Content="Vasárnap" HorizontalAlignment="Left" Margin="430,0,0,10" VerticalAlignment="Bottom" FontWeight="Normal" FontSize="14" HorizontalContentAlignment="Left"/>
+            </Grid>
+        </GroupBox>
 
     </Grid>
 </Window>

@@ -21,28 +21,54 @@ namespace TemperatureProgram
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static DateTime CurrentDate = DateTime.Now;
+        public static MainWindow Instance { get; private set; }
+        private static DateTime CurrentDate;
 
         public MainWindow()
         {
+            Instance = this;
             InitializeComponent();
+            SqlConnection.Initialize();
+            DatePicker.DisplayDate = DateTime.Now;
+            DatePicker.SelectedDate = DateTime.Now;
+            SetCurrentDate(DateTime.Now);
+            SqlConnection.OpenConnection();
         }
 
-        private void RefreshDateLabel()
+        private void SetCurrentDate(DateTime time)
         {
-            CurrentDateLabel.Content = CurrentDate.ToString("yyyy.MM.dd");
+            CurrentDate = time;
+            Label text;
+            foreach (DayOfWeek day in Enum.GetValues(CurrentDate.DayOfWeek.GetType()))
+            {
+                try
+                {
+                    text = (Label)this.FindName(day.ToString());
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Nem található szöveg ezzel az azonosítóval: {CurrentDate.DayOfWeek}, hibakód: {ex.StackTrace}");
+                    return;
+                }
+
+                if(day == CurrentDate.DayOfWeek) text.FontWeight = FontWeights.Bold;
+                else text.FontWeight = FontWeights.Normal;
+            }
         }
 
-        private void PreviousWeekBttn_Click(object sender, RoutedEventArgs e)
+        private void DatePicker_CalendarClosed(object sender, RoutedEventArgs e)
         {
-            CurrentDate = CurrentDate.AddDays(-7);
-            RefreshDateLabel();
+            SetCurrentDate(DatePicker.SelectedDate.GetValueOrDefault());
         }
 
-        private void NextWeekBttn_Click(object sender, RoutedEventArgs e)
+        private void DatePickerTextBox_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            CurrentDate = CurrentDate.AddDays(7);
-            RefreshDateLabel();
+            DatePicker.IsDropDownOpen = true;
+        }
+
+        private void DatePicker_ContextMenuClosing(object sender, ContextMenuEventArgs e)
+        {
+            SetCurrentDate(DatePicker.DisplayDate);
         }
     }
 }
