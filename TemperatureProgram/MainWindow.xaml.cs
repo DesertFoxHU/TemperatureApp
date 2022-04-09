@@ -23,6 +23,7 @@ namespace TemperatureProgram
     {
         public static MainWindow Instance { get; private set; }
         private static DateTime CurrentDate;
+        private DayTemperature dayTemperature;
 
         public MainWindow()
         {
@@ -31,13 +32,14 @@ namespace TemperatureProgram
             SqlConnection.Initialize();
             DatePicker.DisplayDate = DateTime.Now;
             DatePicker.SelectedDate = DateTime.Now;
-            SetCurrentDate(DateTime.Now);
             SqlConnection.OpenConnection();
         }
 
         private void SetCurrentDate(DateTime time)
         {
             CurrentDate = time;
+            dayTemperature = SqlConnection.QueryDay(time);
+            CanvasDrawer.DrawValues(Canvas.ActualWidth, Canvas.ActualHeight, dayTemperature);
         }
 
         private void DatePicker_CalendarClosed(object sender, RoutedEventArgs e)
@@ -57,7 +59,7 @@ namespace TemperatureProgram
 
         private void Canvas_Loaded(object sender, RoutedEventArgs e)
         {
-            CanvasDrawer.DrawBorder(Canvas.ActualWidth);
+            SetCurrentDate(DateTime.Now);
         }
 
         private void Admin_Click(object sender, RoutedEventArgs e)
