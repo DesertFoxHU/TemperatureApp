@@ -23,6 +23,7 @@ namespace TemperatureProgram
     {
         public static MainWindow Instance { get; private set; }
         private DayTemperature dayTemperature;
+        private DataManipulationWindow dataWindow;
 
         public MainWindow()
         {
@@ -31,18 +32,37 @@ namespace TemperatureProgram
             SqlConnection.Initialize();
             DatePicker.DisplayDate = DateTime.Now;
             DatePicker.SelectedDate = DateTime.Now;
+            DayOfWeekLabel.Content = DateTime.Now.DayOfWeek.ToString();
             SqlConnection.OpenConnection();
+            dataWindow = new DataManipulationWindow();
+            
+            this.Closing += (sender, e) => dataWindow.Close();
         }
 
-        private void SetCurrentDate(DateTime time)
+        public void DrawDiagram()
+        {
+            if (!DatePicker.SelectedDate.HasValue) return;
+            DrawDiagram(DatePicker.SelectedDate.Value);
+        }
+
+        public void DrawDiagram(DateTime time)
         {
             dayTemperature = SqlConnection.QueryDay(time);
             CanvasDrawer.Draw(Canvas.ActualWidth, Canvas.ActualHeight, dayTemperature);
+            string dayName = new System.Globalization.CultureInfo("hu-HU").DateTimeFormat.DayNames[(int)time.DayOfWeek];
+            dayName = char.ToUpper(dayName[0]) + dayName.Substring(1);
+            DayOfWeekLabel.Content = dayName;
+
+            if (dayTemperature.Temperature.Count == 0) NoData.Visibility = Visibility.Visible;
+            else NoData.Visibility = Visibility.Hidden;
+
+            Avarage.Content = string.Format("Átlag: {0:0.0}°C", dayTemperature.GetAvarage());
+            Deviation.Content = string.Format("Szórás: {0:0.0}", dayTemperature.GetDeviation());
         }
 
         private void DatePicker_CalendarClosed(object sender, RoutedEventArgs e)
         {
-            SetCurrentDate(DatePicker.SelectedDate.GetValueOrDefault());
+            DrawDiagram(DatePicker.SelectedDate.GetValueOrDefault());
         }
 
         private void DatePickerTextBox_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -52,13 +72,13 @@ namespace TemperatureProgram
 
         private void Canvas_Loaded(object sender, RoutedEventArgs e)
         {
-            SetCurrentDate(DateTime.Now);
+            DrawDiagram(DateTime.Now);
         }
 
         private void Admin_Click(object sender, RoutedEventArgs e)
         {
-            DataWindow window = new DataWindow();
-            window.Show();
+            if (dataWindow == null || !dataWindow.IsActive) dataWindow = new DataManipulationWindow();
+            dataWindow.Show();
         }
     }
 }

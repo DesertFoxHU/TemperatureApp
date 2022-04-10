@@ -33,9 +33,25 @@ namespace TemperatureProgram
             return Temperature.Values.Min();
         }
 
+        public double GetAvarage()
+        {
+            if (Temperature.Count == 0) return 0;
+            return Temperature.Values.Average();
+        }
+
         public double GetDeviation()
         {
-            return 0;
+            List<double> numbers = Temperature.Values.ToList();
+            if (numbers.Count == 0) return 0;
+
+            double avarage = GetAvarage();
+            double summ = 0;
+            foreach(int number in numbers)
+            {
+                summ += Math.Pow(number - avarage, 2);
+            }
+
+            return Math.Sqrt(summ / numbers.Count);
         }
     }
 }

@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TemperatureProgram"
         mc:Ignorable="d"
-        Title="Hőmérséklet" Height="373" Width="676" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowState="Normal">
+        Title="Hőmérséklet" Height="417" Width="676" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowState="Normal">
     <Grid>
 
         <GroupBox Background="#18000000" VerticalAlignment="Top" Height="33">
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <DatePicker x:Name="DatePicker" Focusable="False" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Center" FirstDayOfWeek="Monday" CalendarClosed="DatePicker_CalendarClosed" DisplayDate="2022-04-09">
+                <DatePicker x:Name="DatePicker" Focusable="False" HorizontalAlignment="Center" Margin="0,3,0,0" VerticalAlignment="Center" FirstDayOfWeek="Monday" CalendarClosed="DatePicker_CalendarClosed" DisplayDate="2022-04-09">
                     <DatePicker.Resources>
                         <Style TargetType="DatePickerTextBox">
                             <Setter Property="Text" Value="Válassz dátumot"/>
@@ -18,17 +18,19 @@
                         </Style>
                     </DatePicker.Resources>
                 </DatePicker>
-                <Button x:Name="Admin" Content="Adatbevitel" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Center" Click="Admin_Click"/>
+                <Button x:Name="Admin" Content="Adatbevitel" HorizontalAlignment="Right" Margin="0,3,0,0" VerticalAlignment="Center" Click="Admin_Click"/>
             </Grid>
         </GroupBox>
-        <GroupBox Margin="0,25,0,0" Background="#FFE3FFFC">
+        <GroupBox Margin="0,60,0,0" Background="#FFE3FFFC">
             <Grid x:Name="CanvasGrid">
+                <Label x:Name="NoData" Content="Nincs megjeleníthető adat!" Canvas.Left="178" Canvas.Top="107" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="Red" Panel.ZIndex="1" FontSize="20" Visibility="Visible"/>
                 <Canvas x:Name="Canvas" VerticalAlignment="Top" Margin="50,10,10,0" Loaded="Canvas_Loaded" Height="250">
-                    <Line Stroke="Black" StrokeThickness="1" X1="0" Y1="{Binding ActualHeight, ElementName=Canvas, Mode=OneWay}" Y2="{Binding ActualHeight, ElementName=Canvas, Mode=OneWay}" X2="{Binding ActualWidth, ElementName=Canvas, Mode=OneWay}"/>
-                    <Line Stroke="Black" StrokeThickness="1" Y2="{Binding ActualHeight, ElementName=Canvas, Mode=OneWay}" />
                 </Canvas>
             </Grid>
         </GroupBox>
+        <Label Name="DayOfWeekLabel" Content="DayOfWeek" HorizontalAlignment="Center" Margin="0,34,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+        <Label Name="Avarage" Content="Átlag: 0" HorizontalAlignment="Left" Margin="20,34,0,0" VerticalAlignment="Top"/>
+        <Label Name="Deviation" Content="Szórás: 0" HorizontalAlignment="Right" Margin="0,34,20,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>

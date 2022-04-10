@@ -12,6 +12,8 @@ namespace TemperatureProgram
 {
     internal class CanvasDrawer
     {
+        public const int YAxisMarkerCount = 4;
+
         public static void Draw(double width, double height, DayTemperature dayTemperature)
         {
             MainWindow.Instance.Canvas.Children.Clear();
@@ -50,7 +52,7 @@ namespace TemperatureProgram
                     double Y = height - ((temp - difference) * heightPerTemp);
                     points.Add(new Point(X, Y));
 
-                    Ellipse pointMarker = DrawEllipse(Brushes.Blue, 8);
+                    Ellipse pointMarker = DrawEllipse(Brushes.Blue.Color, 8);
 
                     ToolTip tooltip = new ToolTip();
                     tooltip.Content = temp + "°C";
@@ -62,37 +64,38 @@ namespace TemperatureProgram
             }
             #endregion
 
-            double ySteps = height / 4;
-            for(int i = 0; i < 4; i++)
+            #region Drawing y axis crossings and markers
+            double ySteps = height / YAxisMarkerCount;
+            for(int i = 0; i <= YAxisMarkerCount; i++)
             {
-                double Y = ySteps * i;
+                double Y = height - ySteps * i;
                 DrawLine(0, Y, 10, Y, 1);
+
+                double temp = (length / YAxisMarkerCount) * i;
+
+                string tempString = string.Format("{0:0.0}", temp + difference);
+                Label tempMarker = CreateText($"{tempString} °C", 10);
+                tempMarker.HorizontalContentAlignment = HorizontalAlignment.Right;
+                tempMarker.HorizontalAlignment = HorizontalAlignment.Right;
+                Canvas.SetRight(tempMarker, width+5);
+                Canvas.SetTop(tempMarker, Y - 15);
             }
+            #endregion
 
             //Connecting the points
-            DrawPolyline(points, Brushes.Aqua, 2);
-
-            #region Min and Max temperature marker
-            Label minMarker = CreateText($"{minTemp} °C", 10);
-            Canvas.SetLeft(minMarker, -50);
-            Canvas.SetTop(minMarker, height - 15);
-
-            Label maxMarker = CreateText($"{maxTemp} °C", 10);
-            Canvas.SetLeft(maxMarker, -50);
-            Canvas.SetTop(maxMarker, 0);
-            #endregion
+            DrawPolyline(points, Brushes.Aqua.Color, 2);
         }
 
         private static Line DrawLine(double X1, double Y1, double X2, double Y2, double thickness = 4)
         {
-            return DrawLine(X1, Y1, X2, Y2, Brushes.Black, thickness);
+            return DrawLine(X1, Y1, X2, Y2, Brushes.Black.Color, thickness);
         }
 
-        private static Line DrawLine(double X1, double Y1, double X2, double Y2, SolidColorBrush color, double thickness = 4)
+        private static Line DrawLine(double X1, double Y1, double X2, double Y2, Color color, double thickness = 4)
         {
             Line line = new Line();
             line.StrokeThickness = thickness;
-            line.Stroke = color;
+            line.Stroke = new SolidColorBrush() { Color = color };
             line.X1 = X1;
             line.Y1 = Y1;
             line.X2 = X2;
@@ -101,13 +104,13 @@ namespace TemperatureProgram
             return line;
         }
 
-        private static Ellipse DrawEllipse(SolidColorBrush color, double thickness = 4)
+        private static Ellipse DrawEllipse(Color color, double thickness = 4)
         {
             Ellipse ellipse = new Ellipse();
-            ellipse.Stroke = color;
+            ellipse.Stroke = new SolidColorBrush() { Color = color };
             ellipse.Width = thickness;
             ellipse.Height = thickness;
-            ellipse.Fill = color;
+            ellipse.Fill = new SolidColorBrush() { Color = color };
             MainWindow.Instance.Canvas.Children.Insert(0, ellipse);
             Canvas.SetZIndex(ellipse, 1);
             return ellipse;
@@ -124,10 +127,10 @@ namespace TemperatureProgram
             return label;
         }
 
-        private static void DrawPolyline(List<Point> points, SolidColorBrush color, double thickness)
+        private static void DrawPolyline(List<Point> points, Color color, double thickness)
         {
             Polyline polyline = new Polyline();
-            polyline.Stroke = color;
+            polyline.Stroke = new SolidColorBrush() { Color = color };
             polyline.StrokeThickness = thickness;
 
             PointCollection pointCollection = new PointCollection();

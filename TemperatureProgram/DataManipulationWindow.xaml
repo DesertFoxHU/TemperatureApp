@@ -1,0 +1,30 @@
+﻿<Window x:Class="TemperatureProgram.DataManipulationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TemperatureProgram"
+        mc:Ignorable="d"
+        Title="Adat Manipuláció" Height="158" Width="526" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="#FFC1C1C1">
+    <Grid>
+        <StackPanel Background="#19676767" Width="198" HorizontalAlignment="Left">
+            <Button x:Name="RandomFill" Content="Véletlenszerű adat feltöltés" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="174" Click="RandomFill_Click"/>
+            <Button x:Name="RemoveElements" Content="Adatbázis ürítése" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="174" Click="RemoveElements_Click"/>
+        </StackPanel>
+        <Label Content="Adatbevitel" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="-50,0,0,0" FontWeight="Bold"/>
+        <DatePicker Name="DatePicker" HorizontalAlignment="Left" Margin="210,0,0,0" VerticalAlignment="Center">
+            <DatePicker.Resources>
+                <Style TargetType="DatePickerTextBox">
+                    <Setter Property="Text" Value="Dátum"/>
+                </Style>
+            </DatePicker.Resources>
+        </DatePicker>
+        <ComboBox Name="HourPicker" HorizontalAlignment="Left" Margin="317,0,0,0" VerticalAlignment="Center" Width="83"/>
+        <TextBox Name="TemperatureBox" HorizontalAlignment="Left" Margin="407,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="83" TextAlignment="Center"/>
+        <Button Name="Submit" Content="Hozzáad" Margin="270,94,82,10" Click="Submit_Click" HorizontalAlignment="Center" Width="160" Height="20" VerticalAlignment="Center"/>
+        <Label Content="Dátum" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="238,20,0,0"/>
+        <Label Content="Óra" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="342,21,0,0"/>
+        <Label Content="Hőmérséklet" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="410,21,0,0"/>
+
+    </Grid>
+</Window>

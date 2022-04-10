@@ -32,7 +32,7 @@ namespace TemperatureProgram
                 .ExecuteNonQuery();
         }
 
-        public static void AddElement(DateTime date, double temperature)
+        public static void AddOrUpdateElement(DateTime date, double temperature)
         {
             string temperatureString = string.Format("{0:0.0}", temperature).Replace(",", ".");
             string dateString = date.ToString("yyyy-MM-dd");
@@ -41,8 +41,18 @@ namespace TemperatureProgram
             using (var connection = new SqliteConnection(ConnectionString))
             {
                 connection.Open();
-                new SqliteCommand("INSERT INTO " + MainTableName + " (date, hour, temperature) VALUES " + values + ";", connection)
-                    .ExecuteNonQuery();
+
+                string command1 = "SELECT * FROM " + MainTableName + " WHERE date='" + dateString + "' AND hour=" + date.Hour + ";";
+                SqliteDataReader reader = new SqliteCommand(command1, connection).ExecuteReader();
+                if(!((IDataReader)reader).Read())
+                {
+                    new SqliteCommand("INSERT INTO " + MainTableName + " (date, hour, temperature) VALUES " + values + ";", connection)
+                        .ExecuteNonQuery();
+                    return;
+                }
+
+                string command2 = "UPDATE " + MainTableName + " SET temperature=" + temperature + " WHERE date = '" + dateString + "' AND hour = " + date.Hour + ";";
+                new SqliteCommand(command2, connection).ExecuteNonQuery();
             }
         }
 
@@ -76,6 +86,16 @@ namespace TemperatureProgram
                 reader.Close();
             }
             return dayTemperature;
+        }
+
+        public static void ClearDatabase()
+        {
+            using (var connection = new SqliteConnection(ConnectionString))
+            {
+                connection.Open();
+                string command = "DELETE FROM " + MainTableName + ";";
+                new SqliteCommand(command, connection).ExecuteNonQuery();
+            }
         }
     }
 }
