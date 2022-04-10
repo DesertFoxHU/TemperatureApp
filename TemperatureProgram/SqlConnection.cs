@@ -34,7 +34,7 @@ namespace TemperatureProgram
 
         public static void AddElement(DateTime date, double temperature)
         {
-            string temperatureString = string.Format("{0:0.00}", temperature).Replace(",", ".");
+            string temperatureString = string.Format("{0:0.0}", temperature).Replace(",", ".");
             string dateString = date.ToString("yyyy-MM-dd");
 
             string values = "('" + dateString + "', '" + date.Hour + "', '" + temperatureString + "')";

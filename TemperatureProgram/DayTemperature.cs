@@ -32,5 +32,10 @@ namespace TemperatureProgram
             if (Temperature.Count == 0) return 0;
             return Temperature.Values.Min();
         }
+
+        public double GetDeviation()
+        {
+            return 0;
+        }
     }
 }

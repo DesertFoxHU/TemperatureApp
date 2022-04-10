@@ -10,7 +10,7 @@
 
         <GroupBox Background="#18000000" VerticalAlignment="Top" Height="33">
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <DatePicker x:Name="DatePicker" Focusable="False" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Center" FirstDayOfWeek="Monday" CalendarClosed="DatePicker_CalendarClosed" DisplayDate="2022-04-09" ContextMenuClosing="DatePicker_ContextMenuClosing">
+                <DatePicker x:Name="DatePicker" Focusable="False" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Center" FirstDayOfWeek="Monday" CalendarClosed="DatePicker_CalendarClosed" DisplayDate="2022-04-09">
                     <DatePicker.Resources>
                         <Style TargetType="DatePickerTextBox">
                             <Setter Property="Text" Value="Válassz dátumot"/>
