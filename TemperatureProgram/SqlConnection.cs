@@ -28,18 +28,20 @@ namespace TemperatureProgram
             using var connection = new SqliteConnection(ConnectionString);
             connection.Open();
 
-            new SqliteCommand("CREATE TABLE IF NOT EXISTS " + MainTableName + " (date DATETIME, temperature DOUBLE);", connection)
+            new SqliteCommand("CREATE TABLE IF NOT EXISTS " + MainTableName + " (date DATE, hour INT, temperature DOUBLE);", connection)
                 .ExecuteNonQuery();
         }
 
         public static void AddElement(DateTime date, double temperature)
         {
             string temperatureString = string.Format("{0:0.00}", temperature).Replace(",", ".");
-            string dateString = date.ToString("yyyy-MM-dd HH:m:ss");
+            string dateString = date.ToString("yyyy-MM-dd");
+
+            string values = "('" + dateString + "', '" + date.Hour + "', '" + temperatureString + "')";
             using (var connection = new SqliteConnection(ConnectionString))
             {
                 connection.Open();
-                new SqliteCommand("INSERT INTO " + MainTableName + " (date, temperature) VALUES ('" + dateString + "', " + temperatureString + ");", connection)
+                new SqliteCommand("INSERT INTO " + MainTableName + " (date, hour, temperature) VALUES " + values + ";", connection)
                     .ExecuteNonQuery();
             }
         }
@@ -47,12 +49,12 @@ namespace TemperatureProgram
         public static DayTemperature QueryDay(DateTime date)
         {
             DayTemperature dayTemperature = new DayTemperature(date);
-            string datePattern = date.ToString("yyyy-MM-dd") + "%";
+            string datePattern = date.ToString("yyyy-MM-dd");
 
             using (var connection = new SqliteConnection(ConnectionString))
             {
                 connection.Open();
-                string command = "SELECT * FROM " + MainTableName + " WHERE date LIKE '" + datePattern + "';";
+                string command = "SELECT * FROM " + MainTableName + " WHERE date='" + datePattern + "';";
                 SqliteDataReader reader = new SqliteCommand(command, connection).ExecuteReader();
 
                 while (reader.Read())
@@ -60,13 +62,10 @@ namespace TemperatureProgram
                     IDataRecord record = (IDataReader)reader;
                     try
                     {
-                        string rawDate = record.GetString(0); //yyyy-MM-dd HH:m:ss
-                        double temperature = record.GetDouble(1);
+                        int hour = record.GetInt32(1);
+                        double temperature = record.GetDouble(2);
 
-                        string rawHour = rawDate.Split(' ')[1].Split(':')[0];
-                        int dateHour = int.Parse(rawHour);
-
-                        dayTemperature.Temperature.Add(dateHour, temperature);
+                        dayTemperature.Temperature.Add(hour, temperature);
                     }
                     catch(Exception ex)
                     {

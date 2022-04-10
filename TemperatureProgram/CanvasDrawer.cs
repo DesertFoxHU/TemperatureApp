@@ -34,8 +34,10 @@ namespace TemperatureProgram
         {
             Ellipse ellipse = new Ellipse();
             ellipse.Stroke = color;
-            ellipse.StrokeThickness = thickness;
-            MainWindow.Instance.Canvas.Children.Add(ellipse);
+            ellipse.Width = thickness;
+            ellipse.Height = thickness;
+            ellipse.Fill = color;
+            MainWindow.Instance.Canvas.Children.Insert(0, ellipse);
             return ellipse;
         }
 
@@ -46,54 +48,82 @@ namespace TemperatureProgram
             label.FontSize = fontSize;
             label.HorizontalAlignment = HorizontalAlignment.Center;
             label.VerticalAlignment = VerticalAlignment.Center;
+            MainWindow.Instance.Canvas.Children.Add(label);
             return label;
         }
 
-        public static void DrawValues(double width, double height, DayTemperature dayTemperature)
+        public static void Draw(double width, double height, DayTemperature dayTemperature)
         {
             MainWindow.Instance.Canvas.Children.Clear();
 
             double minTemp = dayTemperature.GetMinTemperature();
             double maxTemp = dayTemperature.GetMaxTemperature();
 
-            #region Drawing axises
+            #region Drawing axis lines
             DrawLine(0, height, width, height, thickness: 1); //X axis
             DrawLine(0, 0, 0, height, thickness: 1); //Y axis
             #endregion
 
             double tempPerPixel = height / maxTemp;
 
+            List<Point> points = new List<Point>();
+
             #region Drawing inner lines and values
             double xSteps = width / 24d;
             for (int i = 1; i <= 24; i++)
             {
                 double X = xSteps * i;
-                DrawLine(X, height, X, height-10, 1);
+                DrawLine(X, height, X, height-10, 1); //TimeMarker lines
+
                 Label timeMarker = CreateText($"{i-1}:00", 10);
                 timeMarker.RenderTransform = new RotateTransform(-45);
 
-                MainWindow.Instance.Canvas.Children.Add(timeMarker);
-                Canvas.SetLeft(timeMarker, X - xSteps);
-                Canvas.SetTop(timeMarker, height + 15);
+                Canvas.SetLeft(timeMarker, X);
+                Canvas.SetTop(timeMarker, height + 20);
 
                 //Points
-                double temp = dayTemperature.Temperature.GetValueOrDefault(i-1, 0);
-                double Y = temp * tempPerPixel;
-                DrawLine(X, height - 10, X, Y, Brushes.Red, 0.5);
+                if (dayTemperature.Temperature.ContainsKey(i - 1))
+                {
+                    double temp = dayTemperature.Temperature[i-1];
+                    double Y = temp * tempPerPixel;
+                    points.Add(new Point(X, Y));
+
+                    Ellipse pointMarker = DrawEllipse(Brushes.Blue, 10.5);
+
+                    ToolTip tooltip = new ToolTip();
+                    tooltip.Content = temp + "°C";
+
+                    pointMarker.ToolTip = tooltip;
+                    Canvas.SetLeft(pointMarker, X - (pointMarker.Width / 2));
+                    Canvas.SetTop(pointMarker, Y - (pointMarker.Height / 2));
+                }
             }
             #endregion
 
+            DrawPolyline(points, Brushes.Aqua, 3);
+
             #region Min and Max temperature marker
             Label minMarker = CreateText($"{minTemp} °C", 10);
-            MainWindow.Instance.Canvas.Children.Add(minMarker);
             Canvas.SetLeft(minMarker, -50);
             Canvas.SetTop(minMarker, height - 15);
 
             Label maxMarker = CreateText($"{maxTemp} °C", 10);
-            MainWindow.Instance.Canvas.Children.Add(maxMarker);
             Canvas.SetLeft(maxMarker, -50);
             Canvas.SetTop(maxMarker, 0);
             #endregion
+        }
+
+        private static void DrawPolyline(List<Point> points, SolidColorBrush color, double thickness)
+        {
+            Polyline polyline = new Polyline();
+            polyline.Stroke = color;
+            polyline.StrokeThickness = thickness;
+
+            PointCollection pointCollection = new PointCollection();
+            points.ForEach((point) => pointCollection.Add(point));
+
+            polyline.Points = pointCollection;
+            MainWindow.Instance.Canvas.Children.Add(polyline);
         }
 
     }

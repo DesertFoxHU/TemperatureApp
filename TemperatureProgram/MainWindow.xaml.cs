@@ -33,13 +33,16 @@ namespace TemperatureProgram
             DatePicker.DisplayDate = DateTime.Now;
             DatePicker.SelectedDate = DateTime.Now;
             SqlConnection.OpenConnection();
+
+            this.StateChanged += (sender, e) => SetCurrentDate(CurrentDate);
+            this.SizeChanged += (sender, e) => SetCurrentDate(CurrentDate);
         }
 
         private void SetCurrentDate(DateTime time)
         {
             CurrentDate = time;
             dayTemperature = SqlConnection.QueryDay(time);
-            CanvasDrawer.DrawValues(Canvas.ActualWidth, Canvas.ActualHeight, dayTemperature);
+            CanvasDrawer.Draw(Canvas.ActualWidth, Canvas.ActualHeight, dayTemperature);
         }
 
         private void DatePicker_CalendarClosed(object sender, RoutedEventArgs e)
